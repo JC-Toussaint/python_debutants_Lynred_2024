@@ -1,0 +1,267 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{a4wide}
+\usepackage {amsmath}
+\usepackage{amssymb}
+\usepackage {graphicx}
+\usepackage[utf8]{inputenc} 
+\usepackage[francais]{babel}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{extramarks}
+\usepackage{chngpage}
+\usepackage{soul}
+\usepackage{algorithmicx} 
+\usepackage{algpseudocode} 
+\usepackage{multicol}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{graphicx,float,wrapfig}
+\usepackage{ifthen}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{esint}
+\usepackage{bbm}
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{epsfig}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows}
+\usepackage{braket}
+\usepackage{MnSymbol,wasysym}
+\usepackage{marvosym}
+\usepackage{dsfont}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Python,                 % the language of the code
+  morekeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\newtheorem{de}{Définition}[subsection] % les definitions et les theoremes sont
+\newtheorem{theo}{Theoreme}[section]    % numerotes par section
+\newtheorem{prop}[theo]{Proposition}    % Les propositions ont le meme compteur
+                                        % que les theoremes
+
+\DeclareMathOperator{\tr}{tr}
+
+\lhead{} 
+\chead{} 
+\rhead{\bfseries Python} 
+\lfoot{JC Toussaint - Phelma }
+%\cfoot{} 
+%\rfoot{\thepage}
+
+% Includes a MATLAB script.
+% The first parameter is the label, which also is the name of the script
+%   without the .m.
+% The second parameter is the optional caption.
+\newcommand{\matlabscript}[2]
+  {\begin{itemize}\item[]\lstinputlisting[caption=#2,label=#1]{#1.m}\end{itemize}}
+
+\lhead{} 
+\chead{} 
+\rhead{\bfseries Python} 
+\lfoot{JC Toussaint - Phelma }
+
+\pagestyle{fancy}
+
+\begin{document}
+
+\bibliographystyle{alpha}
+
+\title{02 - Le projet tri rapide d'une liste}
+
+\author{Lionel Bastard \& Jean-Christophe Toussaint\\
+%  Phelma\\
+ \texttt{prenom.nom@phelma.grenoble-inp.fr}}
+\date{\today}
+ 
+\maketitle
+
+
+%L'exercice, proposé ci-après, est à réaliser en totale autonomie et constitue le socle
+%de base en Python que vous devez assimiler.
+
+\section{Introduction}
+
+On génère une liste aléatoire $A$  de $N=1000$ entiers que l'on désire
+trier par ordre croissant. 
+
+\begin{enumerate} 
+\item Utiliser la  fonction  numpy {\tt np.random.randint} pour générer les nombres.
+Que remarquez-vous quand vous exécutez deux fois cette fonction?
+
+\item Faire la même chose en la précédant de l'instruction 
+{\tt np.random.seed(12345)} qui initialise le générateur de nombres aléatoires avec une graine.
+Même question que précédemment.
+\end{enumerate} 
+
+\section{Tri par bulle}
+\begin{enumerate} 
+\item Dévélopper une fonction {\tt Tri\_bulle(A)} permettant de trier le tableau de manière croissante.
+La méthode la plus simple dite de "tri par bulle" consiste à permuter si nécessaire, deux éléments successifs
+du tableau et à recommencer dès le début du tableau tant qu'il n'est pas trié.
+
+\begin{algorithmic}[1]
+   \begin{multicols}{2}
+\Function{Tri\_bulle}{$T$}
+\State $n \gets \Call{Len}{$T$}$
+\State $change \gets True$
+    \While{$change == True$}
+   \State $change \gets False$ 
+   \For{$i \gets 0 {\; \bf to\; } n-1$}   
+   \State $j \gets i+1$
+    \If {$T[i]>T[j]$}
+           \State $change \gets True$ 
+           \State $T \gets \Call{Echanger}{$T, i, j$} $ \Comment{$T[i] \leftrightarrow T[j]$}
+    \EndIf
+    \EndFor
+\EndWhile
+    \State \Return $T$
+\EndFunction
+\end{multicols}
+\end{algorithmic}
+   Noter que le symbole $\rhd$ désigne le début d'un commentaire.
+    
+\item On désire mesurer le temps CPU nécessaire pour faire le tri. Utiliser la portion de code suivant :
+\begin{lstlisting}[language=python]
+from time import process_time
+
+# Start the stopwatch / counter 
+t1_start = process_time() 
+   
+A=tri_bulle(A)
+  
+# Stop the stopwatch / counter
+t1_stop = process_time()
+print("Elapsed time (s):", t1_stop-t1_start) 
+\end{lstlisting}
+
+Etudier l'évolution du temps de calcul en fonction de $N = 2^n$ pour $n \in \mathbb{N}$.
+Tracer le temps de calcul en fonction de $N$ en représentation loglog.
+Pour cette étude  de performance, on initialisera le générateur avec la même graine pour générer
+toujours le même tableau pour une taille donnée. \\L'autre possibilité serait de faire une étude
+statistique sur un grand nombre d'échantillons de tableaux de même taille.
+
+ 
+\item  Hoare a inventé en 1962, une méthode de type "diviser pour régner"  permettant de trier un
+tableau en $N \ln N$ opérations. 
+Son algorithme s'écrit :
+
+\begin{algorithmic}[1]
+   \begin{multicols}{2}
+\Function{Tri\_rapide}{$T,g,d$}
+    \If {$g < d$}
+        \State $ip, T \gets \Call{Partition}{$T, g, d$} $
+         \State $T \gets \Call{Tri\_rapide}{$T, g, ip$} $
+         \State $T \gets \Call{Tri\_rapide}{$T, ip+1, d$} $
+    \EndIf
+    \State \Return $T$
+\EndFunction
+\\
+\Function{Partition}{$T,g,d$}
+    \State $pivot \gets T[g]$
+    \State $i \gets g-1$
+    \State $j \gets d+1$
+        \columnbreak
+    \While{$true$}
+    \Repeat
+    \State $j \gets j-1$
+    \Until{$T[j] <= pivot$}
+
+    \Repeat
+    \State $i \gets i+1$
+    \Until{$T[i] >= pivot$}
+    \If {$i < j$}
+    \State $T \gets \Call{Echanger}{$T, i, j$} $ \Comment{$T[i] \leftrightarrow T[j]$}
+    \Else
+    \State \Return $j, T$
+    \EndIf
+        \EndWhile
+\EndFunction
+\end{multicols}
+\end{algorithmic}
+
+Noter que le symbole $\rhd$ désigne le début d'un commentaire.
+
+\item La boucle conditionnelle {\tt repeat ... until (condition)} n'existe pas en Python, on vous demande de proposer une implémentation possible. 
+On prend l'exemple d'une boucle incrémentale gérée par une variable $i$ variant
+de 0 à 9 avant l'incrémentation.
+
+\newpage 
+
+\begin{algorithmic}[1]
+    \State $i \gets 0$
+    \Repeat \Comment{afficher \; $i$}
+    \State $i \gets i+1$  
+    \Until{$i==10$}
+\end{algorithmic}
+
+Cet algorithme peut être traduit en python par:
+\begin{lstlisting}[language=python]
+i=0
+while True:
+	print(i)
+	i=i+1
+	if i==10:
+		break
+\end{lstlisting}
+Tester cette implémentation dans un programme à part.
+
+\item Implémenter l'algorithme suivant sous la forme d'une fonction Python. 
+On rappelle que l'échange des valeurs de deux variables $a \leftrightarrow b$ en python s'écrit :
+$a,\; b=b,\; a$. Cette instruction fonctionne aussi pour 2 éléments (i, j) d'un tableau numpy :
+$T[i], T[j]= T[j], T[i]$. Une version plus optimisée s'écrit : $T[[i, j]]=T[[j, i]]$
+
+\item Son appel 
+tri\_rapide(A, 0, len(A)-1) trie le tableau $A$ in-place.
+
+
+%\item Faites un programme appelant la fonction tri\_rapide permettant de trier des tableaux
+%de taille $2^n$ où $n \in [1, 20]$.  En utilisant la fonction {\tt \%timeit} , stocker le temps CPU
+%dans un tableau et finalement tracer l'évolution du temps de calcul en fonction de la taille.
+%
+%\item Vérifier qu'il varie en $N \ln N$ dans la limite des grandes valeurs de $N$.
+
+%\begin{figure}[h]
+%   \caption{\label{Algo} Algorithme Tri Rapide}
+%   \includegraphics[width=8cm]{Algo_Tri_Rapide}
+%\end{figure}
+
+\item Etudier et tracer l'évolution du temps de calcul en fonction de $N$.
+Comparez avec la méthode précédente.
+
+\end{enumerate} 
+
+\end{document}
+

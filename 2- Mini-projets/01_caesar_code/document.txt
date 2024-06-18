@@ -1,0 +1,9 @@
+En cryptographie le chiffrement de Cesar egalement appele chiffrement de Cesar chiffrement par decalage
+code de Cesar ou decalage de Cesar est l une des techniques de
+chiffrement les plus simples et les plus connues 
+Il s agit d un type de chiffrement par substitution dans lequel 
+chaque lettre du texte en clair est remplacee par une lettre situee a
+un nombre fixe de positions dans l alphabet
+Par exemple avec un decalage vers la gauche
+de 3 D est remplace par A E devient B et ainsi de suite 
+La methode doit son nom a Jules Cesar qui l’utilisait dans sa correspondance privee
